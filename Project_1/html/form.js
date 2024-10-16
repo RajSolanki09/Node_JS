@@ -1,60 +1,75 @@
-const handleForm = async (e) => {
+import taskAPI from "./api.js";
+
+let id = -1;
+
+const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const taskData = {
+    const task = {
         taskName: document.getElementById('taskName').value,
         description: document.getElementById('description').value,
-        status: document.getElementById('status').value
+        status: document.getElementById('status').value,
     };
 
-    try {
-        await axios.post('http://localhost:8888/', taskData);
-        fetchTasks(); 
-        taskForm.reset();
-    } catch (error) {
-        console.error("Error creating task:", error);
+    if (id === -1) {
+        await taskAPI.post(task);
+    } else {
+        await taskAPI.patch(id, task);
+        id = -1;
+        document.getElementById('type').textContent = 'Submit';
     }
+
+    getTasks();  // Fetch the updated list of tasks
 };
 
-document.getElementById("taskForm").addEventListener('submit', handleForm);
+const uimaker = (tasks) => {
+    const listElement = document.getElementById('list');
+    listElement.innerHTML = '';
 
-const fetchTasks = async () => {
-    try {
-        const response = await axios.get('http://localhost:8888/'); 
-        document.getElementById('taskList').innerHTML = ''; // Ensure this ID is correct
+    tasks.forEach((task) => {
+        const div = document.createElement('div');
+        div.className = 'task-card card mb-3 p-3';
 
-        response.data.map(task => {
-            document.getElementById('taskList').innerHTML += `
-                <div class="card mb-3" id="task-${task._id}">
-                    <div class="card-body">
-                        <h5 class="card-title"><strong>Task:</strong> ${task.taskName}</h5>
-                        <p class="card-text"><strong>Description:</strong> ${task.description}</p>
-                        <p class="card-text"><strong>Status:</strong> ${task.status}</p>
-                        <button id="delete-btn-${task._id}" class="btn btn-danger">Delete</button>
-                    </div>
-                </div>
-            `;
+        const taskName = document.createElement('h4');
+        taskName.innerHTML = `Task Name: ${task.taskName}`;
+
+        const description = document.createElement('p');
+        description.innerHTML = `Description: ${task.description}`;
+
+        const status = document.createElement('p');
+        status.innerHTML = `Status: ${task.status}`;
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.innerHTML = "Delete";
+        deleteBtn.className = 'btn btn-danger me-2';
+        deleteBtn.addEventListener('click', async () => {
+            await taskAPI.delete(task._id);
+            getTasks();
         });
 
-        response.data.forEach(task => {
-            const deleteButton = document.getElementById(`delete-btn-${task._id}`);
-            deleteButton.addEventListener('click', () => {
-                deleteTask(task._id);
-            });
-        });
-    } catch (error) {
-        console.error("Error fetching tasks:", error);
-    }
+        const updateBtn = document.createElement('button');
+        updateBtn.innerHTML = 'Update';
+        updateBtn.className = 'btn btn-secondary';
+        updateBtn.addEventListener('click', () => handleUpdate(task));
+
+        div.append(taskName, description, status, deleteBtn, updateBtn);
+        listElement.append(div);
+    });
 };
 
-const deleteTask = async (taskId) => {
-    try {
-        await axios.delete(`http://localhost:8888/${taskId}`);
-        fetchTasks(); 
-    } catch (error) {
-        console.error("Error deleting task:", error);
-    }
+const handleUpdate = (task) => {
+    document.getElementById('taskName').value = task.taskName;
+    document.getElementById('description').value = task.description;
+    document.getElementById('status').value = task.status;
+    document.getElementById('type').textContent = 'Update';
+    id = task._id;
 };
 
-// Fetch tasks on page load
-fetchTasks();
+const getTasks = async () => {
+    const tasks = await taskAPI.get();
+    uimaker(tasks);
+};
+
+getTasks();  // Fetch tasks when the page loads
+
+document.getElementById('form').addEventListener('submit', handleSubmit);
