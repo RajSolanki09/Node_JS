@@ -1,3 +1,5 @@
+const User = require("../model/user.model")
+
 const getUser = async (req, res) => {
     let data = await User.find()
     res.send(data)
