@@ -9,6 +9,7 @@ const getProduct = async (req, res) => {
     let data = await Product.find()
     res.send(data)
 }
+
 // Find By UserID
 const getProductByUserId = async (res, req) => {
     let { userId } = req.params

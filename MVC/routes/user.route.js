@@ -8,5 +8,3 @@ userRouter.post("/login",login)
 userRouter.post("/", postUser)
 
 module.exports = userRouter
-
-
