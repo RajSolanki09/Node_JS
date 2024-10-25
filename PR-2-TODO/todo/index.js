@@ -86,5 +86,5 @@ app.get('/findbystatus', (req, res) => {
 
 // Start the server
 app.listen(8090, () => {
-    console.log(`Server is running on 8090 ${8090}`);
+    console.log(`Server is running on 8090`);
 });
