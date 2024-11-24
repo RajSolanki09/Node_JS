@@ -18,7 +18,7 @@
   ### 1 marks
  
 ## 2 Make a post route with name /addtodo 
-  ### we should be able to add todos into the array when we hit the post route 
+  ### we should be able to add todos into t  he array when we hit the post route 
    ### post  data should be in this form {title :learning node js, isCompleted: false }
    ### when we are adding data into the array you have to add id also send added todo 
    ### 2 marks
