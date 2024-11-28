@@ -34,21 +34,27 @@ app.post('/addtodo', (req, res) => {
     res.status(201).send(newTodo);
 });
 
-app.patch('/update/:id', (req, res) => {
-    const { id } = req.params;
-    const { title, isCompleted } = req.body;
-    
-    let todo = initialTodo.find(t => t.id === parseInt(id));
+app.patch("/update/:id", (req, res) => {
+  const { id } = req.params;
+  const { title, isCompleted } = req.body;
+  console.log(id);
 
-    if (!todo) {
-        return res.status(404).send({ error: "Todo not found" });
-    }
+  const index = initialTodo.findIndex((todo) => todo.id == id);
+  if (index === -1) {
+      return res.status(404).send("Todo not found!");
+  }
 
-    if (title) todo.title = title;
-    if (isCompleted !== undefined) todo.isCompleted = isCompleted;
+  initialTodo[index].title =
+    typeof title === "string" ? title : initialTodo[index].title;
 
-    res.send(todo);
+  initialTodo[index].isCompleted =
+    typeof isCompleted === "boolean"
+      ? isCompleted
+      : initialTodo[index].isCompleted;
+
+  res.send(initialTodo[index]);
 });
+
 
 app.delete('/delete/:id', (req, res) => {
     const { id } = req.params;
@@ -86,5 +92,5 @@ app.get('/findbystatus', (req, res) => {
 
 // Start the server
 app.listen(8090, () => {
-    console.log(`Server is running on 8090 ${8090}`);
+    console.log(`Server is running on 8090`);
 });
