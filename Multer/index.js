@@ -2,16 +2,19 @@ const express = require('express')
 const dbconnection = require('./config/db.js');
 const productRoute = require("./routes/product.routes.js")
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 6060;
 const app = express()
+const path = require("path");
 
+app.use(express.urlencoded({ extended: true }))
 
 app.use(express.json())
 app.use("/products", productRoute)
-app.get("/", (req, res) => {
-    res.send("Welcome to the server");
-})
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "view/form.html"))
+})
 
 
 app.listen(PORT, () => {
