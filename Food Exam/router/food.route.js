@@ -1,10 +1,11 @@
-const {Router} = require("express");
+const { Router } = require("express");
 const { addFood, getFood, updateFood } = require("../controller/food.controller");
+const { checkRole } = require("../middlewere/userMiddleware");
 const foodRouter = Router();
 
 
-foodRouter.post("/foods", addFood);
+foodRouter.post("/foods", checkRole, addFood);
 foodRouter.get("/foods", getFood);
-foodRouter.put("/foods/:id", updateFood);
+foodRouter.put("/foods/:id", checkRole, updateFood);
 
 module.exports = foodRouter;
