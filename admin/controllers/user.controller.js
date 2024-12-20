@@ -1,12 +1,14 @@
 const User = require("../models/user.model");
-
+const bcrypt = require('bcrypt')
 const createUser = async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email, password } = req.body;
     let isExists = await User.findOne({ email: email });
     if (isExists) {
       return res.send("users already Exists");
     } else {
+      let hash = await bcrypt.hash(password, 10);
+      req.body.password = hash;
       let user = await User.create(req.body);
       return res.status(201).json(user);
     }
@@ -57,15 +59,20 @@ const login = async (req, res) => {
   const { email, password } = req.body;
   let isExists = await User.findOne({ email: email });
   if (!isExists) {
-    return res.send("user not found");
+    return res.send("user not found try again");
   }
-  if (isExists.password != password) {
-    return res.send("invalid password");
+
+
+  const isExisted = await bcrypt.compare(password, isExists.password)
+  if (!isExisted) {
+    return res.send("password is incorrect")
   }
 
   res.cookie("username", isExists.username);
+
   res.cookie("userId", isExists.id);
-  return res.send("logged in");
+
+  return res.send("logged in success");
 };
 
 // pages
@@ -87,4 +94,4 @@ module.exports = {
   getLoginPage,
   getSignupPage,
   login,
-};
+}
