@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 // Session & Passport Setup
 app.use(session({ secret: "secret-key" }));
 app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.session()); 
 initializer(passport);
 // View Engine Setup
 app.set("view engine", "ejs");

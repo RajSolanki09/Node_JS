@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= singleBlog.title %></title>
+  </head>
+  <body>
+    <div id="blog">
+      <img
+        id="img"
+        src="<%= singleBlog.image %>"
+        alt="<%= singleBlog.title %>"
+      />
+      <h3 id="title"><%= singleBlog.title %></h3>
+      <span id="category"><%= singleBlog.category %></span>
+      <p id="content"><%= singleBlog.content %></p>
+
+      <!-- Like button and like count -->
+      <button id="like">Like</button>
+      <span id="count"><%= singleBlog.likes.length %></span>
+
+      <!-- Comment form -->
+      <form id="comment">
+        <textarea
+          name="comment"
+          rows="4"
+          cols="50"
+          placeholder="Add a comment..."
+          required
+        ></textarea>
+        <button type="submit">Submit Comment</button>
+      </form>
+    </div>
+
+    <script>
+      document.getElementById("like").addEventListener("click", async () => {
+        // Get blog ID from the URL
+        const url = window.location.href.split("/");
+        const id = url[url.length - 1];
+
+        try {
+          const response = await fetch(`/blog/like/${id}`, {
+            method: "PATCH",
+          });
+
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+
+          const data = await response.json();
+          document.getElementById("count").innerHTML = data.blog.likes.length;
+        } catch (error) {
+          console.error("Error updating likes:", error);
+          alert("Error updating likes: " + error.message);
+        }
+      });
+
+      document
+        .getElementById("comment")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          const url = window.location.href.split("/");
+          const id = url[url.length - 1];
+          const commentText = event.target.comment.value;
+
+          try {
+            const response = await fetch(`/blog/comment/${id}`, {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ comment: commentText }),
+            });
+
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+
+            alert("Comment added successfully!");
+            event.target.reset();
+          } catch (error) {
+            console.error("Error adding comment:", error);
+            alert("Error adding comment: " + error.message);
+          }
+        });
+    </script>
+  </body>
+</html>

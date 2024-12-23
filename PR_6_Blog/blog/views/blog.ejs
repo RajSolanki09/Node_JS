@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 0;
+      }
+      #parent-blog {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .list {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        transition: transform 0.3s ease;
+      }
+      .list:hover {
+        transform: translateY(-5px);
+      }
+      .img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 10px 10px 0 0;
+      }
+      .title {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 15px 0 5px;
+      }
+      .category {
+        display: inline-block;
+        background-color: #28a745;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+      }
+      @media (max-width: 600px) {
+        #parent-blog {
+          grid-template-columns: 1fr;
+          padding: 10px;
+        }
+        .img {
+          height: 150px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="parent-blog"></div>
+
+    <script>
+      const getBlogData = async () => {
+        try {
+          const response = await fetch("/blog/blogs");
+
+          // Check if the response is okay (status in the range 200-299)
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+
+          const data = await response.json();
+          render(data);
+        } catch (error) {
+          console.error("Error fetching blog data:", error);
+        }
+      };
+
+      const render = (data) => {
+        const parentBlog = document.getElementById("parent-blog");
+        parentBlog.innerHTML = "";
+
+        data.forEach(({ title, image, category }) => {
+          const blogContainer = document.createElement("div");
+          blogContainer.classList.add("list");
+
+          const blogImage = document.createElement("img");
+          blogImage.classList.add("img");
+          blogImage.src = image;
+          blogImage.alt = title;
+
+          const blogTitle = document.createElement("p");
+          blogTitle.classList.add("title");
+          blogTitle.textContent = title;
+
+          const categorySpan = document.createElement("span");
+          categorySpan.classList.add("category");
+          categorySpan.textContent = category;
+
+          blogContainer.append(blogImage, blogTitle, categorySpan);
+          parentBlog.append(blogContainer);
+        });
+      };
+
+      getBlogData();
+    </script>
+  </body>
+</html>

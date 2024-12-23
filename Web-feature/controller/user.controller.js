@@ -1,0 +1,62 @@
+const bcrypt = require("bcrypt");
+const User = require("../modele/user.schema");
+
+const loginPage = async (req, res) => {
+    res.render("login.ejs");
+};
+
+const signupPage = async (req, res) => {
+    res.render("signup.ejs");
+};
+
+const addToPlaylist = async (req, res) => {
+    res.render("addtoplaylist.ejs");
+};
+
+const createUser = async (req, res) => {
+    try {
+        const { email } = req.body;
+        let isExists = await User.findOne({ email: email });
+        if (isExists) {
+            return res.status(400).json({ message: "User already exists" });
+        } else {
+            let hash = await bcrypt.hash(password, 10);
+            req.body.password = hash;
+            let user = await User.create(req.body);
+            return res.status(201).json({
+                message: "Signup successful",
+                user: user
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+const getUser = async (req, res) => {
+    try {
+        let users = await User.find();
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ error: error });
+    }
+};
+
+const login = async (req, res) => {
+    const { email, password } = req.body;
+    let isExists = await User.findOne({ email: email });
+    if (!isExists) {
+        return res.send("user not found");
+    }
+
+    const isMatched = await bcrypt.compare(password, isExists.password);
+
+    if (!isMatched) {
+        return res.send("invalid password");
+    }
+    res.cookie("username", isExists.username);
+    res.cookie("userId", isExists.id);
+    return res.send("logged in");
+};
+
+
+module.exports = { login, createUser, getUser, loginPage, signupPage, addToPlaylist };
