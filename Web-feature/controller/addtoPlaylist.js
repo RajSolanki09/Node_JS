@@ -1,33 +1,32 @@
-const Feature = require("../modele/feature.schema");
-
 const addToPlaylist = async (req, res) => {
     try {
-        const { playlistId, songId } = req.body;
+        const { userId } = req.cookies;  // Assuming the user ID is stored in cookies
+        const { title, artist, url } = req.body;
 
-        // Find the playlist and update it by pushing the new song
-        const updatedPlaylist = await Feature.findByIdAndUpdate(
-            playlistId,
-            { $push: { songs: songId } },
-            { new: true }
-        );
-
-        if (!updatedPlaylist) {
-            return res.status(404).json({ message: "Playlist not found" });
+        // Find the user by ID
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
         }
 
-        res.status(200).json({
-            success: true,
-            message: "Song added to playlist successfully",
-            playlist: updatedPlaylist
+        // Create a new playlist entry
+        const newSong = new playl({
+            title,
+            artist,
+            url
         });
 
+        // Save the new playlist song
+        await newSong.save();
+
+        // Add the new song's ObjectId to the user's playlist
+        user.playlist.push(newSong._id);
+        await user.save();
+
+        res.status(200).json({ message: 'Song added to playlist', playlist: user.playlist });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: "Error adding song to playlist",
-            error: error.message
-        });
+        res.status(500).json({ error: error.message });
     }
-}
+};
 
-module.exports = { addToPlaylist };
+module.exports = addToPlaylist;

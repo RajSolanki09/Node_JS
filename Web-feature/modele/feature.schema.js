@@ -1,9 +1,21 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const featureSchema = new mongoose.Schema({
-  apptoplaylist: String
+// Playlist schema for individual song data
+const playlistSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    artist: {
+        type: String,
+        required: true
+    },
+    url: {
+        type: String,
+        required: true
+    }
 });
 
-const Feature = mongoose.model("Feature", featureSchema);
+const Playlist = mongoose.model('Playlist', playlistSchema);
 
-module.exports = Feature;
+module.exports = Playlist;

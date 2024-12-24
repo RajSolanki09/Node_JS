@@ -12,26 +12,31 @@ const signupPage = async (req, res) => {
 const addToPlaylist = async (req, res) => {
     res.render("addtoplaylist.ejs");
 };
-
 const createUser = async (req, res) => {
     try {
-        const { email } = req.body;
+        const { email, name, password } = req.body;
+
+        // Check if the user already exists
         let isExists = await User.findOne({ email: email });
         if (isExists) {
             return res.status(400).json({ message: "User already exists" });
-        } else {
-            let hash = await bcrypt.hash(password, 10);
-            req.body.password = hash;
-            let user = await User.create(req.body);
-            return res.status(201).json({
-                message: "Signup successful",
-                user: user
-            });
         }
+
+        // Hash the password
+        let hash = await bcrypt.hash(password, 10);
+        req.body.password = hash;
+
+        // Create the user
+        await User.create(req.body);
+
+        // Show a success page without displaying user details
+        res.render("signupSuccess");
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
+
+
 const getUser = async (req, res) => {
     try {
         let users = await User.find();
@@ -40,22 +45,29 @@ const getUser = async (req, res) => {
         res.status(500).json({ error: error });
     }
 };
-
 const login = async (req, res) => {
-    const { email, password } = req.body;
-    let isExists = await User.findOne({ email: email });
-    if (!isExists) {
-        return res.send("user not found");
-    }
+    try {
+        const { email, password } = req.body;
 
-    const isMatched = await bcrypt.compare(password, isExists.password);
+        // Check if the user exists
+        let isExists = await User.findOne({ email: email });
+        if (!isExists) {
+            return res.status(404).send("User not found");
+        }
 
-    if (!isMatched) {
-        return res.send("invalid password");
+        // Check if the password matches
+        const isMatched = await bcrypt.compare(password, isExists.password);
+        if (!isMatched) {
+            return res.status(401).send("Invalid password");
+        }
+
+        // Set cookies and send success response
+        res.cookie("username", isExists.name);
+        res.cookie("userId", isExists._id);
+        return res.send("Logged in successfully");
+    } catch (error) {
+        res.status(500).send(error.message);
     }
-    res.cookie("username", isExists.username);
-    res.cookie("userId", isExists.id);
-    return res.send("logged in");
 };
 
 

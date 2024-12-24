@@ -5,7 +5,8 @@ const userRouter = Router();
 userRouter.get("/login", loginPage);
 userRouter.get("/signup", signupPage);
 userRouter.post("/signup", createUser);
-userRouter.get("/", getUser);
 userRouter.post("/login", login);
+
+userRouter.get("/", getUser);
 
 module.exports = userRouter;    
