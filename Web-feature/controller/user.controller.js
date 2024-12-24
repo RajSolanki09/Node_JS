@@ -16,21 +16,18 @@ const createUser = async (req, res) => {
     try {
         const { email, name, password } = req.body;
 
-        // Check if the user already exists
         let isExists = await User.findOne({ email: email });
         if (isExists) {
             return res.status(400).json({ message: "User already exists" });
         }
 
-        // Hash the password
         let hash = await bcrypt.hash(password, 10);
         req.body.password = hash;
 
-        // Create the user
         await User.create(req.body);
 
-        // Show a success page without displaying user details
-        res.render("signupSuccess");
+        return res.status(200).json({ message: "Account created successfully" });
+
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -49,19 +46,16 @@ const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Check if the user exists
         let isExists = await User.findOne({ email: email });
         if (!isExists) {
             return res.status(404).send("User not found");
         }
 
-        // Check if the password matches
         const isMatched = await bcrypt.compare(password, isExists.password);
         if (!isMatched) {
             return res.status(401).send("Invalid password");
         }
 
-        // Set cookies and send success response
         res.cookie("username", isExists.name);
         res.cookie("userId", isExists._id);
         return res.send("Logged in successfully");

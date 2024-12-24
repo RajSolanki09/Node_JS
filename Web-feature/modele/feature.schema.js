@@ -1,21 +1,16 @@
 const mongoose = require('mongoose');
 
-// Playlist schema for individual song data
-const playlistSchema = new mongoose.Schema({
-    title: {
-        type: String,
-        required: true
-    },
-    artist: {
-        type: String,
-        required: true
-    },
+const imageSchema = new mongoose.Schema({
     url: {
         type: String,
         required: true
+    },
+    uploadedAt: {
+        type: Date,
+        default: Date.now
     }
 });
 
-const Playlist = mongoose.model('Playlist', playlistSchema);
+const Image = mongoose.model('Image', imageSchema);
 
-module.exports = Playlist;
+module.exports = Image;

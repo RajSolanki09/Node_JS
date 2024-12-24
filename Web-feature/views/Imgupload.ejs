@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Image URL</title>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    .upload-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .upload-form label {
+      margin-bottom: 10px;
+    }
+    .upload-form input {
+      margin-bottom: 10px;
+    }
+    .upload-form button {
+      margin-top: 10px;
+    }
+
+  </style>
+</head>
+
+<body>
+  <form action="/img/images" method="POST" class="upload-form">
+    <label for="url">Image URL:</label>
+    <input type="url" name="url" id="url" placeholder="Enter image URL" required>
+    <input type="submit" value="Upload">
+  </form>
+
+</body>
+
+</html>
