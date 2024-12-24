@@ -12,6 +12,8 @@ const {
 
 const userRouter = Router();
 const passport = require("passport");
+const { isLoggedIn } = require("../middlewares/isLogin");
+const { isSuperAdmin } = require("../middlewares/role.middleware");
 
 // pages
 userRouter.get("/login", getLoginPage);
@@ -22,6 +24,11 @@ userRouter.post("/", createUser);
 userRouter.patch("/:userId", updateUser);
 userRouter.delete("/:userId", deleteUser);
 userRouter.post("/login", login);
+
+//superadmin
+userRouter.get("/admin-list", isLoggedIn,isSuperAdmin);
+userRouter.post("/superadmin/admins/:userId/verify", verifyAdmin);
+
 userRouter.post("/login", passport.authenticate("local"),(req,res)=>{
   res.send("logged in");
 });

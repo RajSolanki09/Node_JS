@@ -84,6 +84,11 @@ const getLoginPage = (req, res) => {
 const getSignupPage = (req, res) => {
   res.render("signup");
 };
+// admin
+const getAdmins = async (req, res) => {
+  let admins = await User.find({ role: "admin", isVerified: false });
+  res.status(200).json(admins);
+};
 
 module.exports = {
   createUser,
