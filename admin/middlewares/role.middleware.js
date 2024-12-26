@@ -4,7 +4,7 @@ const isSuperAdmin = (req, res, next) => {
     } else {
         return res.status(403).json({ message: "not allowed to access" });
     }
-};
+};  
 
 const isAdmin = (req, res, next) => {
     if (req.user.role === "admin") {
