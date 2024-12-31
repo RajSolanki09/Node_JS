@@ -47,44 +47,6 @@ const registerUser = async (req, res) => {
     }
 }
 
-const loginUser = async (req, res) => {
-    try{
-        let { email, password } = req.body
-        const userInput = {
-            email,
-            password
-        }
-        const { error, value } = userLoginSchema.validate(userInput)
-
-        if (error) {
-            // Handle validation error
-            console.error('Validation error:', error.details[0].message)
-        } else {
-            let user = await userModel.findOne({email})
-            if(!user) return res.status(401).send("email or password incorrect !")
-            else {
-                // Proceed with logging in the user in the database
-                console.log('Valid user input:', value);
-                // Create the user in the database here
-                bcrypt.compare(password, user.password, (err, result) => {
-                    if(result) {
-                        let token = generateToken(user)
-                        res.cookie("token", token)
-                        res.send("you can login !")
-                    }
-                    else {
-                        req.flash("error", "email or password incorrect")
-                        res.redirect("/")
-                    }
-                })
-        
-            }
-        }
-    }
-    catch(err) {
-        console.log(err.message)
-    }
-}
 
 const logoutUser = (req, res) => {
     res.cookie("token", "");
