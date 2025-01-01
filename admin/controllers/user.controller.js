@@ -89,6 +89,13 @@ const getAdmins = async (req, res) => {
   let admins = await User.find({ role: "admin", isVerified: false });
   res.status(200).json(admins);
 };
+// send mail
+
+const sendMail = async (req, res) => {
+  const { to, subject, content } = req.body;
+  await sendingMail(to, subject, content);
+  res.send("mail to: " + to);
+};
 
 module.exports = {
   createUser,
@@ -99,4 +106,6 @@ module.exports = {
   getLoginPage,
   getSignupPage,
   login,
+  getAdmins,
+  sendMail,
 }
