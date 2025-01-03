@@ -10,12 +10,21 @@ const {
   login,
   getAdmins,
   sendMail,
+  sendOtp,
+  verifyOtp,
 } = require("../controllers/user.controller");
 const passport = require("passport");
 const { isLoggedIn } = require("../middlewares/isLogin");
 const { isSuperadmin } = require("../middlewares/role");
 
 const userRouter = Router();
+
+
+userRouter.get("/reset-password", (req, res) => {
+  res.render("resetpassword");
+});
+
+
 userRouter.get("/admin-list", isLoggedIn, isSuperadmin, getAdmins);
 // pages
 userRouter.get("/login", getLoginPage);
@@ -34,9 +43,15 @@ userRouter.post(
   })
 );
 
+// super admins routes
 
 // mail routes
 
-userRouter.post("/mail", sendMail)
+userRouter.post("/mail", sendMail);
+
+// password reset routes
+
+userRouter.post("/send-otp", sendOtp);
+userRouter.post("/reset-password", verifyOtp);
 
 module.exports = userRouter;

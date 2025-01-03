@@ -17,7 +17,7 @@ const sendingMail = async (to, subject, content) => {
       html: content,
     };
     let res = await transport.sendMail(mailOptions);
-    console.log(res);
+    // console.log(res);
   } catch (error) {
     console.log(error.message);
   }

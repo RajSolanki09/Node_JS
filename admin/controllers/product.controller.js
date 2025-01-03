@@ -13,7 +13,6 @@ const getProductsByUserId = async (req, res) => {
 
 const createProduct = async (req, res) => {
   const { userId } = req.cookies;
-  
 
   const { title, price, img } = req.body;
   let data = {
@@ -23,7 +22,6 @@ const createProduct = async (req, res) => {
     userId: userId,
   };
   req.body.userId = userId;
- 
 
   let product = await Product.create(data);
   res.send(product);
