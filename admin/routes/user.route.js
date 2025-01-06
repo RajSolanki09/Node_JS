@@ -7,7 +7,6 @@ const {
   deleteUser,
   getLoginPage,
   getSignupPage,
-  login,
   getAdmins,
   sendMail,
   sendOtp,
@@ -15,7 +14,7 @@ const {
 } = require("../controllers/user.controller");
 const passport = require("passport");
 const { isLoggedIn } = require("../middlewares/isLogin");
-const { isSuperadmin } = require("../middlewares/role");
+const { isSuperAdmin } = require("../middlewares/role.middleware");
 
 const userRouter = Router();
 
@@ -25,7 +24,7 @@ userRouter.get("/reset-password", (req, res) => {
 });
 
 
-userRouter.get("/admin-list", isLoggedIn, isSuperadmin, getAdmins);
+userRouter.get("/admin-list", isLoggedIn, isSuperAdmin, getAdmins);
 // pages
 userRouter.get("/login", getLoginPage);
 userRouter.get("/signup", getSignupPage);

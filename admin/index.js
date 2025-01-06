@@ -35,6 +35,6 @@ app.use("/products", productRoute);
 // Server Startup
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  console.log("listening on port on" + PORT);
+  console.log("listening on port on " + PORT);
   connection();
 });
