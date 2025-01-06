@@ -26,7 +26,7 @@ const createUser = async (req, res) => {
         } else {
             req.body.password = password; // No hashing
             let user = await User.create(req.body);
-            return res.status(201).json(user);
+            return res.status(201).json({ message: "signup successful"});
         }
     } catch (error) {
         res.status(500).json({ error: error });
@@ -47,7 +47,6 @@ const login = async (req, res) => {
     res.cookie("userId", isExists.id);
     return res.send("logged in");
 };
-
 
 // send mail
 
@@ -87,15 +86,18 @@ const verifyOtp = async (req, res) => {
     console.log(req.body);
     console.log(otps);
 
-    let data = otps.get(Number(otp));
-    console.log(data);
-    if (!data) {
-        res.send("Invalid OTP ");
+    let email = otps.get(Number(otp));
+    console.log(email);
+    if (!email) {
+        return res.send("Invalid OTP");
     }
-    let user = await User.findOne({ email: data });
+    let user = await User.findOne({ email: email });
+    if (!user) {
+        return res.send("User not found");
+    }
     user.password = password;
     await user.save();
-    res.send("password reset");
+    res.redirect("/user/login");
 };
 
 module.exports = { getLoginPage, getSignupPage, getIndexPage, getResetPasswordPage, createUser, login, sendMail, sendOtp, verifyOtp };

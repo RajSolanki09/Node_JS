@@ -5,7 +5,7 @@ const userRouter = Router();
 userRouter.get("/login", getLoginPage);
 userRouter.get("/signup", getSignupPage);
 userRouter.get("/index", getIndexPage);
-userRouter.get("/resetPassword", getResetPasswordPage);
+userRouter.get("/reset-password", getResetPasswordPage);
 userRouter.post("/signup", createUser);
 userRouter.post("/login", login);
 
@@ -15,4 +15,5 @@ userRouter.post("/mail", sendMail);
 
 userRouter.post("/send-otp", sendOtp);
 userRouter.post("/reset-password", verifyOtp);
+
 module.exports = userRouter;
