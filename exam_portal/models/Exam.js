@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
-const ExamSchema = new mongoose.Schema({
-  title: { type: String, required: true },
+const examSchema = new mongoose.Schema({
+  title: { type: String, required: true, unique: true },
+  description: { type: String, required: true },
   questions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Question' }],
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-});
+}, { timestamps: true });
 
-module.exports = mongoose.model('Exam', ExamSchema);
+module.exports = mongoose.model('Exam', examSchema);

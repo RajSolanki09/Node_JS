@@ -1,35 +1,46 @@
 const Exam = require('../models/Exam');
+const Question = require('../models/Question');
 
-const createExam = async (req, res) => {
-  const { title, questions, createdBy } = req.body;
+exports.createExam = async (req, res) => {
   try {
-    const exam = new Exam({ title, questions, createdBy });
-    await exam.save();
+    const { title, description } = req.body;
+
+    const newExam = new Exam({ title, description });
+    await newExam.save();
+
     res.status(201).json({ message: 'Exam created successfully' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-const updateExam = async (req, res) => {
-  const { id } = req.params;
-  const { title, questions } = req.body;
+exports.updateExam = async (req, res) => {
   try {
-    const exam = await Exam.findByIdAndUpdate(id, { title, questions }, { new: true });
-    res.json(exam);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const { examId } = req.params;
+    const { title, description } = req.body;
+
+    const exam = await Exam.findByIdAndUpdate(examId, { title, description }, { new: true });
+    if (!exam) {
+      return res.status(404).json({ message: 'Exam not found' });
+    }
+
+    res.status(200).json({ message: 'Exam updated successfully', exam });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-const deleteExam = async (req, res) => {
-  const { id } = req.params;
+exports.deleteExam = async (req, res) => {
   try {
-    await Exam.findByIdAndDelete(id);
-    res.json({ message: 'Exam deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const { examId } = req.params;
+
+    const exam = await Exam.findByIdAndDelete(examId);
+    if (!exam) {
+      return res.status(404).json({ message: 'Exam not found' });
+    }
+
+    res.status(200).json({ message: 'Exam deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
   }
 };
-
-module.exports = { createExam, updateExam, deleteExam };

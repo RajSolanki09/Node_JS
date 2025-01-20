@@ -1,10 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const { createQuestion, updateQuestion, deleteQuestion } = require('../controllers/questionController');
-const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
+const questionController = require('../controllers/questionController');
+const { isAuthorized, isAuthenticated } = require('../controllers/userController.js ');
 
-router.post('/', authenticateToken, authorizeRoles('Teacher'), createQuestion);
-router.put('/:id', authenticateToken, authorizeRoles('Teacher'), updateQuestion);
-router.delete('/:id', authenticateToken, authorizeRoles('Teacher'), deleteQuestion);
+router.post('/create', isAuthenticated, isAuthorized(['admin', 'teacher']), questionController.createQuestion);
+
+router.put('/update/:id', isAuthenticated, isAuthorized(['admin', 'teacher']), questionController.updateQuestion);
+
+router.delete('/delete/:id', isAuthenticated, isAuthorized(['admin', 'teacher']), questionController.deleteQuestion);
+
+router.get('/exam/:examId', questionController.getQuestionsByExam);
+
+router.get('/:id', questionController.getQuestionById);
 
 module.exports = router;

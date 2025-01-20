@@ -2,20 +2,24 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
+// Register User (Admin, Teacher, or Student)
 const registerUser = async (req, res) => {
   const { email, password, role } = req.body;
 
+  // Check if user already exists
   const isUserExists = await User.findOne({ email });
   if (isUserExists) {
     return res.status(400).json({ message: 'User already exists' });
   }
 
+  // Hash the password
   const hashedPassword = await bcrypt.hash(password, 12);
 
+  // Create and save the user
   const newUser = new User({
     email,
     password: hashedPassword,
-    role: role || 'student',
+    role: role || 'student', // Default to 'student' if no role is provided
   });
 
   try {
@@ -26,19 +30,23 @@ const registerUser = async (req, res) => {
   }
 };
 
+// Login User
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
+  // Find the user by email
   const user = await User.findOne({ email });
   if (!user) {
     return res.status(400).json({ message: 'Invalid credentials' });
   }
 
+  // Compare passwords
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
     return res.status(400).json({ message: 'Invalid credentials' });
   }
 
+  // Generate JWT token
   const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, {
     expiresIn: '1h',
   });
@@ -46,6 +54,7 @@ const loginUser = async (req, res) => {
   res.status(200).json({ message: 'Login successful', token });
 };
 
+// Middleware to protect routes
 const isAuthenticated = (req, res, next) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
   if (!token) {
@@ -61,6 +70,7 @@ const isAuthenticated = (req, res, next) => {
   }
 };
 
+// Middleware to check user roles
 const isAuthorized = (roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {

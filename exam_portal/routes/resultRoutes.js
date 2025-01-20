@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { createResult, getResults } = require('../controllers/resultController');
-const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
+const resultController = require('../controllers/resultController');
 
-router.post('/', authenticateToken, authorizeRoles('Student'), createResult);
-router.get('/', authenticateToken, authorizeRoles('Student', 'Teacher', 'Admin'), getResults);
+router.get('/student/:studentId', resultController.getResultsByStudent);
+
+router.post('/submit', resultController.submitResult);
+
+router.get('/:id', resultController.getResultById);
 
 module.exports = router;
